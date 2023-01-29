@@ -1,5 +1,5 @@
 package Rythm_Game;
-
+//jlayer1.0.1 jar ÇÊ¿ä.
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
