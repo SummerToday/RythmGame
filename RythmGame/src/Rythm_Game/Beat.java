@@ -13,8 +13,8 @@ import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,6 +23,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import DB_Connection.DBConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Beat extends JFrame {
 
@@ -47,18 +54,20 @@ public class Beat extends JFrame {
 	private ImageIcon hardButtonEnteredImage = new ImageIcon("src/images/hardButtonEntered.png");
 	private ImageIcon backButtonBasicImage = new ImageIcon("src/images/backButtonBasic.png");
 	private ImageIcon backButtonEnteredImage = new ImageIcon("src/images/backButtonEntered.png");
-	
+
 	private ImageIcon createUserButtonbBasicImage = new ImageIcon("src/images/CreateUser.png");
 	private ImageIcon createUserButtonEnteredImage = new ImageIcon("src/images/CreateUser(entered).png");
 	private ImageIcon createButtonBasicImage = new ImageIcon("src/images/create.png");
 	private ImageIcon createButtonEnteredImage = new ImageIcon("src/images/create(entered).png");
-
+	private ImageIcon loginButtonBasicImage = new ImageIcon("src/images/login.png");
+	private ImageIcon loginButtonEnteredImage = new ImageIcon("src/images/login(entered).png");
 	private Image backGround = new ImageIcon("src/images/tiesto_concert__musical_freedom-wallpaper-1280x800.jpg")
 			.getImage();
 	private JLabel menuBar = new JLabel(new ImageIcon("src/images/menuBar.png"));
 	
-	private JButton createButton= new JButton(createButtonBasicImage);
-	private JButton createUserButton= new JButton(createUserButtonbBasicImage);
+	private JButton loginButton = new JButton(loginButtonBasicImage);
+	private JButton createButton = new JButton(createButtonBasicImage);
+	private JButton createUserButton = new JButton(createUserButtonbBasicImage);
 	private JButton exitButton = new JButton(exitButtonEnteredImage);
 	private JButton startButton = new JButton(startButtonBasicImage);
 	private JButton quitButton = new JButton(quitButtonBasicImage);
@@ -69,15 +78,15 @@ public class Beat extends JFrame {
 	private JButton hardButton = new JButton(hardButtonBasicImage);
 	private JButton backButton = new JButton(backButtonBasicImage); // 버튼들, 배경들 이미지 설정.
 	private JButton loginbackButton = new JButton(backButtonBasicImage);
-	private ImageIcon profile=new ImageIcon("src/images/profile.png");
-	private JLabel profileLb=new JLabel(" ");
+	private ImageIcon profile = new ImageIcon("src/images/profile.png");
+	private JLabel profileLb = new JLabel(" ");
 	private JLabel idLb = new JLabel("ID :");
 	private JLabel pwLb = new JLabel("PW :");
 	private JLabel nameLb = new JLabel("NAME :");
 	private JLabel birthdateLb = new JLabel("BIRTHDATE :");
 	private JLabel nickNameLb = new JLabel("NICKNAME :");
 	private JLabel pwCheckLb = new JLabel("PW CHECK :");
-	private JLabel showId;//닉네임으로 바꾸기.
+	private JLabel showId;// 닉네임으로 바꾸기.
 	private JTextField idInput;
 	private JTextField nameInput;
 	private JTextField birthdateInput;
@@ -88,13 +97,11 @@ public class Beat extends JFrame {
 	private boolean isGameScreen = false; // 게임 화면(플레이 화면) 여부
 	private boolean isLoginScreen = true; // 로그인 화면으로 시작.
 	private boolean isCreateUserScreen = false; // 회원가입 화면 전환 여부.
-	/* 스크린 전역 변수 사용시 유의점
-	 * 여러개의 스크린 변수가 true 값을 가지고 있을시 스크린이 넘어가지 않음.
-	 * 논리는 맞지만 화면이 안넘어가는 경우는 대부분 스크린 변수가 중복으로 true로 설정이 되어있는 경우. 
+	/*
+	 * 스크린 전역 변수 사용시 유의점 여러개의 스크린 변수가 true 값을 가지고 있을시 스크린이 넘어가지 않음. 논리는 맞지만 화면이
+	 * 안넘어가는 경우는 대부분 스크린 변수가 중복으로 true로 설정이 되어있는 경우.
 	 */
-	
-	
-	
+
 	ArrayList<Track> trackList = new ArrayList<>(); // 음악이 들어가는 리스트.
 
 	private Image titleImage;
@@ -104,11 +111,13 @@ public class Beat extends JFrame {
 																											// 설정.
 	private int nowSelected = 0; // 현재 선택된 음악의 번호.
 	public static Game game; // 게임 전역 변수 설정.
-	
-	//DB 연동 부분 
-	Connection conn = null; // DB연결된 상태(세션)을 담은 객체
-    PreparedStatement pstm = null;  // SQL 문을 나타내는 객체
-    ResultSet rs = null;  // 쿼리문을 날린것에 대한 반환값을 담을 객체
+
+	// DB 연동 부분
+	Connection conn = DBConnection.getConnection(); // DB연결된 상태(세션)을 담은 객체
+	PreparedStatement pstm = null; // SQL 문을 나타내는 객체, 예외 처리 필요 문장.
+	ResultSet rs = null; // 쿼리문을 날린것에 대한 반환값을 담을 객체
+	String quary; // 쿼리문 저장.
+	boolean loginFailPane = true; // 로그인 실패창 동작 유무 변수
 
 	public Beat() {
 		setUndecorated(true); // 타이틀 바를 없앰. for. 새로운 타이틀바를 탈아주기 위해
@@ -129,19 +138,21 @@ public class Beat extends JFrame {
 				new ImageIcon("src/images/18. Fitz & the Tantrums - HandClap Entered.png"),
 				"18. Fitz & the Tantrums - HandClap(배경).png", "18. Fitz & the Tantrums - HandClap selected.mp3",
 				"18. Fitz & the Tantrums - HandClap sample.mp3", "Fitz & the Tantrums - HandClap"));
-		trackList.add(new Track("Anne-Marie - 2002(title).png",
-				new ImageIcon("src/images/041 Anne-Marie - 2002.png"),
-				new ImageIcon("src/images/041 Anne-Marie - 2002 Entered not yet.png"),
-				"041 Anne-Marie - 2002(배경).png", "041 Anne-Marie - 2002 selected.mp3", "041 Anne-Marie - 2002.mp3",
-				"Anne-Marie - 2002"));
+		trackList.add(new Track("Anne-Marie - 2002(title).png", new ImageIcon("src/images/041 Anne-Marie - 2002.png"),
+				new ImageIcon("src/images/041 Anne-Marie - 2002 Entered not yet.png"), "041 Anne-Marie - 2002(배경).png",
+				"041 Anne-Marie - 2002 selected.mp3", "041 Anne-Marie - 2002.mp3", "Anne-Marie - 2002"));
 		trackList.add(new Track("노을 - 늦은 밤 너의 집 앞 골목길에서(title).png",
 				new ImageIcon("src/images/024 노을 - 늦은 밤 너의 집 앞 골목길에서.png"),
 				new ImageIcon("src/images/024 노을 - 늦은 밤 너의 집 앞 골목길에서Entered not yet.png"),
 				"024 노을 - 늦은 밤 너의 집 앞 골목길에서(배경).png", "024 노을 - 늦은 밤 너의 집 앞 골목길에서 selected.mp3",
 				"024 노을 - 늦은 밤 너의 집 앞 골목길에서.mp3", "024 노을 - 늦은 밤 너의 집 앞 골목길에서"));
-		//로그인 화면 구성 시작
-
-		createUserButton.setBounds(625,600,100,25);
+		// 로그인 화면 구성 시작
+		loginButton.setBounds(740, 600, 100, 25);
+		loginButton.setBorderPainted(false);
+		loginButton.setContentAreaFilled(false); // 버튼 영역 배경 설정
+		loginButton.setFocusPainted(false); // 포커스 표시 설정
+		add(loginButton);
+		createUserButton.setBounds(625, 600, 100, 25);
 		createUserButton.setBorderPainted(false);
 		createUserButton.setContentAreaFilled(false); // 버튼 영역 배경 설정
 		createUserButton.setFocusPainted(false); // 포커스 표시 설정
@@ -162,33 +173,124 @@ public class Beat extends JFrame {
 		add(pwInput);
 		pwInput.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String passWord = new String(pwInput.getPassword());
-				if (idInput.getText().equals("20195125") && passWord.equals("1234")) {
-					JOptionPane.showMessageDialog(null, "WELCOME");
-					add(profileLb);
-					showId=new JLabel(idInput.getText()+" WELCOME BACK!!");
-					showId.setForeground(Color.RED);
-					showId.setFont(new Font("맑은 고딕", Font.BOLD, 15)); // 위치+크기설정
-					showId.setBounds(35, 0, 300, 40);
-					add(showId);                  
-					idInput.setVisible(false);   //ID 입력창 제거
-					pwInput.setVisible(false);   //PW 입력창 제거
-					idLb.setVisible(false);      //ID 라벨 제거
-					pwLb.setVisible(false);      //PW 라벨 제거
-					createUserButton.setVisible(false); //생성 버튼 제거
-					isLoginScreen=false;          // 로그인 완료 후 로그인 화면 종료.
-					quitButton.setVisible(true);
-					startButton.setVisible(true);		
-					backGround=new ImageIcon(
-							"src/images/tiesto_concert__musical_freedom-wallpaper-1280x800.jpg").getImage(); 
-							//원래 초기 배경으로 다시 설정.
-				} else {
-					JOptionPane.showMessageDialog(null, "Faild");
-				}
-			}
-		});
+				try {
+					quary = "SELECT *FROM LOGIN"; // 쿼리문 저장.
+					// DB에 연결된 상태를 con 에 담는다.
+					pstm = conn.prepareStatement(quary);
+					// 연결된상태(con)를 가지고 prepareStatement(query)메서드를 통해 DB에 쿼리문을 보낸다.
+					rs = pstm.executeQuery();
 
-		
+					String passWord = new String(pwInput.getPassword());
+
+					while (rs.next()) {
+						String id = rs.getString("id");
+						String ps = rs.getString("password");
+						String nickname=rs.getString("nickname");
+						if (idInput.getText().equals(id) && passWord.equals(ps)) { // DB에 있는 회원 정보와 대조.
+							JOptionPane.showMessageDialog(null, "WELCOME");
+							add(profileLb);
+							showId = new JLabel(nickname + " WELCOME BACK!!");
+							showId.setForeground(Color.RED);
+							showId.setFont(new Font("맑은 고딕", Font.BOLD, 15)); // 위치+크기설정
+							showId.setBounds(35, 0, 300, 40);
+							add(showId);
+							idInput.setVisible(false); // ID 입력창 제거
+							pwInput.setVisible(false); // PW 입력창 제거
+							idLb.setVisible(false); // ID 라벨 제거
+							pwLb.setVisible(false); // PW 라벨 제거
+							createUserButton.setVisible(false); // 생성 버튼 제거
+							loginButton.setVisible(false); 
+							isLoginScreen = false; // 로그인 완료 후 로그인 화면 종료.
+							quitButton.setVisible(true);
+							startButton.setVisible(true);
+							backGround = new ImageIcon(
+									"src/images/tiesto_concert__musical_freedom-wallpaper-1280x800.jpg").getImage();
+							loginFailPane = false; // 로그인 실패창 안뜨게.
+							break;
+							// 원래 초기 배경으로 다시 설정.
+						}
+					}
+					if (loginFailPane) {
+						JOptionPane.showMessageDialog(null, "Faild");
+					}
+				} catch (SQLException sqle) {
+					System.out.println("SELECT문에서 예외 발생");
+					sqle.printStackTrace();
+
+				}
+
+			}
+
+		});
+		loginButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				loginButton.setIcon(loginButtonEnteredImage);
+				loginButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // 버튼에 들어왔을 때 마우스 커서 모양 설정
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				loginButton.setIcon(loginButtonBasicImage);
+				loginButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); // 버튼에서 나갔을 때 마우스 커서 모양 기본 설정.
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				Music buttonEnteredMusic = new Music("buttonPressedMusic.mp3", false); // 마우스를 눌렀을 때 효과음 설정. 반복x
+				buttonEnteredMusic.start(); // 효과음 시작.
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
+				} // 이 블록이 없을시 소리가 나기 전에 윈도우 창이 닫혀서 소리가 안들림 그래서 1000밀리초=1초 동안 스레드를 멈춰줌.->소리가 나고
+				try {
+					quary = "SELECT *FROM LOGIN"; // 쿼리문 저장.
+					// DB에 연결된 상태를 con 에 담는다.
+					pstm = conn.prepareStatement(quary);
+					// 연결된상태(con)를 가지고 prepareStatement(query)메서드를 통해 DB에 쿼리문을 보낸다.
+					rs = pstm.executeQuery();
+
+					String passWord = new String(pwInput.getPassword());
+
+					while (rs.next()) {
+						String id = rs.getString("id");
+						String ps = rs.getString("password");
+						if (idInput.getText().equals(id) && passWord.equals(ps)) { // DB에 있는 회원 정보와 대조.
+							JOptionPane.showMessageDialog(null, "WELCOME");
+							add(profileLb);
+							showId = new JLabel(idInput.getText() + " WELCOME BACK!!");
+							showId.setForeground(Color.RED);
+							showId.setFont(new Font("맑은 고딕", Font.BOLD, 15)); // 위치+크기설정
+							showId.setBounds(35, 0, 300, 40);
+							add(showId);
+							idInput.setVisible(false); // ID 입력창 제거
+							pwInput.setVisible(false); // PW 입력창 제거
+							idLb.setVisible(false); // ID 라벨 제거
+							pwLb.setVisible(false); // PW 라벨 제거
+							createUserButton.setVisible(false); // 생성 버튼 제거
+							loginButton.setVisible(false); // 생성 버튼 제거
+							isLoginScreen = false; // 로그인 완료 후 로그인 화면 종료.
+							quitButton.setVisible(true);
+							startButton.setVisible(true);
+							backGround = new ImageIcon(
+									"src/images/tiesto_concert__musical_freedom-wallpaper-1280x800.jpg").getImage();
+							loginFailPane = false; // 로그인 실패창 안뜨게.
+							break;
+							// 원래 초기 배경으로 다시 설정.
+						}
+					}
+					if (loginFailPane) {
+						JOptionPane.showMessageDialog(null, "Faild");
+					}
+				} catch (SQLException sqle) {
+					System.out.println("SELECT문에서 예외 발생");
+					sqle.printStackTrace();
+
+				}
+			} // 무명 클래스를 이용하여 주석 구현.
+
+		});
 		createUserButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -211,7 +313,7 @@ public class Beat extends JFrame {
 				} catch (InterruptedException ex) {
 					ex.printStackTrace();
 				} // 이 블록이 없을시 소리가 나기 전에 윈도우 창이 닫혀서 소리가 안들림 그래서 1000밀리초=1초 동안 스레드를 멈춰줌.->소리가 나고
-				isLoginScreen=false;    //true로 나둘 경우 화면 안넘어감.
+				isLoginScreen = false; // true로 나둘 경우 화면 안넘어감.
 				isCreateUserScreen = true;
 				idInput.setText("");
 				pwInput.setText("");
@@ -240,8 +342,45 @@ public class Beat extends JFrame {
 					Thread.sleep(1000);
 				} catch (InterruptedException ex) {
 					ex.printStackTrace();
-				} // 이 블록이 없을시 소리가 나기 전에 윈도우 창이 닫혀서 소리가 안들림 그래서 1000밀리초=1초 동안 스레드를 멈춰줌.->소리가 나고
-			} // 무명 클래스를 이용하여 주석 구현.
+				}
+				try {
+					String c_id;
+					String c_pw;
+					String c_pw_check;
+					String c_name;
+					String c_birthdate;
+					String c_nickname;
+					c_id = idInput.getText();
+					c_pw = new String(pwInput.getPassword());
+					c_pw_check = new String(pwCheckInput.getPassword());
+					c_name = nameInput.getText();
+					c_birthdate = birthdateInput.getText();
+					c_nickname = nickNameInput.getText();
+					//패스워드 일치 여부 확인(올바른 회원 정보 확인)
+					if ((c_pw.equals(c_pw_check)) && !c_pw.equals("") && !c_pw_check.equals("") //올바른 정보인 경우.
+							&&!c_id.equals("")&&!c_name.equals("")&&!c_birthdate.equals("")&&!c_nickname.equals("")) {
+						JOptionPane.showMessageDialog(null, "회원가입에 성공했습니다!");
+						quary = "INSERT INTO login VALUES (" + "'" + c_id + "'" + "," + "'" + c_nickname + "'" + ","
+								+ "'" + c_pw_check + "'" + "," + "'" + c_birthdate + "'" + "," + "'" + c_name + "'"
+								+ ")";
+						pstm = conn.prepareStatement(quary);
+						// 연결된상태(con)를 가지고 prepareStatement(query)메서드를 통해 DB에 쿼리문을 보낸다.
+						pstm.executeQuery(); // 쿼리문 실행
+					} else if(c_pw.equals("") || c_pw_check.equals("")  //공백이 하나라도 있는경우 오류 출력.
+							||c_id.equals("")||c_name.equals("")||c_birthdate.equals("")||c_nickname.equals("")){
+						JOptionPane.showMessageDialog(null, "올바른 정보를 입력해주십시오.");
+					}else if((!c_pw.equals(c_pw_check)) && !c_pw.equals("") && !c_pw_check.equals("")
+							&&!c_id.equals("")&&!c_name.equals("")&&!c_birthdate.equals("")&&!c_nickname.equals("")){
+						JOptionPane.showMessageDialog(null, "패스워드가 일치하지 않습니다.");
+						//공백은 없지만 패스워드가 일치하지 않는경우.
+					}
+
+				} catch (SQLException sqle) {
+					System.out.println("SELECT문에서 예외 발생");
+					JOptionPane.showMessageDialog(null, "올바른 정보를 입력해주십시오.");
+					sqle.printStackTrace();
+				}
+			}
 
 		});
 		loginbackButton.addMouseListener(new MouseAdapter() {
@@ -280,7 +419,7 @@ public class Beat extends JFrame {
 			} // 무명 클래스를 이용하여 주석 구현.
 
 		});
-		//로그인 화면 구성.
+		// 로그인 화면 구성.
 		exitButton.setBounds(1250, 0, 30, 30); // setBounds(x,y,w,h) x,y:위치 좌표 w,h: 크기 설정
 		exitButton.setBorderPainted(false); // 버튼 테두리 설정
 		exitButton.setContentAreaFilled(false); // 버튼 영역 배경 설정
@@ -570,26 +709,24 @@ public class Beat extends JFrame {
 		// 창을 그려주는 역할.
 		screenDraw((Graphics2D) screenGraphic);
 		g.drawImage(screenImage, 0, 0, null);
-	} 
+	}
 
-	public void screenDraw(Graphics2D g) { 
+	public void screenDraw(Graphics2D g) {
 		g.drawImage(backGround, 0, 0, null);
 		if (isLoginScreen) {
 			loginScreen();
 
-		}
-		else if (isMainScreen) {
+		} else if (isMainScreen) {
 			g.drawImage(titleImage, 390, 600, null);
 		} // 곡 선택 화면 하단에 곡 제목을 그려줌. bc. Image형이기 때문에 drawImage() 해줘야
 		else if (isGameScreen) {
-			game.screenDraw(g); //게임 플레이 내부 화면일시 game 클래스의 게임 내부 화면을 그려주는 메소드 호출. 
-		}
-		else if(isCreateUserScreen) {
+			game.screenDraw(g); // 게임 플레이 내부 화면일시 game 클래스의 게임 내부 화면을 그려주는 메소드 호출.
+		} else if (isCreateUserScreen) {
 			createUserScreen();
 		}
-		
+
 		paintComponents(g); // 컴포넌트들을 그려줌.
-		this.repaint();     //변경된 사항들을 정확히 다시 그려줌. 안그러면 그림 잘려서 나오고 이상해짐.
+		this.repaint(); // 변경된 사항들을 정확히 다시 그려줌. 안그러면 그림 잘려서 나오고 이상해짐.
 	}
 
 	public void selectTrack(int nowSelected) {
@@ -622,12 +759,13 @@ public class Beat extends JFrame {
 			nowSelected++;
 		selectTrack(nowSelected);
 	}
-	
-	public void createUserScreen() {   //회원가입 화면 구성
+
+	public void createUserScreen() { // 회원가입 화면 구성
 		quitButton.setVisible(false);
 		startButton.setVisible(false);
 		backGround = new ImageIcon("src/images/loginScreen.png").getImage();
 		createUserButton.setVisible(false);
+		loginButton.setVisible(false);
 		pwCheckLb.setForeground(Color.YELLOW);
 		pwCheckLb.setFont(new Font("맑은 고딕", Font.BOLD, 30)); // 위치+크기설정
 		pwCheckLb.setBounds(330, 240, 400, 100);
@@ -645,18 +783,18 @@ public class Beat extends JFrame {
 		nickNameLb.setBounds(325, 450, 400, 100);
 		add(nickNameLb);
 		idLb.setFont(new Font("맑은 고딕", Font.BOLD, 30));
-		idLb.setBounds(450, 100, 100, 100); //id레이블 위치 변경
+		idLb.setBounds(450, 100, 100, 100); // id레이블 위치 변경
 		pwLb.setFont(new Font("맑은 고딕", Font.BOLD, 30));
-		pwLb.setBounds(435, 170, 200, 100); //pw레이블 위치 변경
-		
+		pwLb.setBounds(435, 170, 200, 100); // pw레이블 위치 변경
+
 		idInput.setBounds(540, 130, 300, 40);
 		pwInput.setBounds(540, 200, 300, 40);
-		createButton.setBounds(625,570,100,40);
+		createButton.setBounds(625, 570, 100, 40);
 		createButton.setBorderPainted(false);
 		createButton.setContentAreaFilled(false); // 버튼 영역 배경 설정
 		createButton.setFocusPainted(false); // 포커스 표시 설정
 		add(createButton);
-		loginbackButton.setBounds(15,40,50,50);
+		loginbackButton.setBounds(15, 40, 50, 50);
 		loginbackButton.setBorderPainted(false);
 		loginbackButton.setContentAreaFilled(false); // 버튼 영역 배경 설정
 		loginbackButton.setFocusPainted(false); // 포커스 표시 설정
@@ -667,6 +805,7 @@ public class Beat extends JFrame {
 		nickNameInput.setVisible(true);
 		createButton.setVisible(true);
 		createUserButton.setVisible(false);
+		loginButton.setVisible(false);
 		loginbackButton.setVisible(true);
 		pwCheckLb.setVisible(true);
 		nameLb.setVisible(true);
@@ -714,13 +853,13 @@ public class Beat extends JFrame {
 
 		createButton.setVisible(false);
 		createUserButton.setVisible(true);
+		loginButton.setVisible(true);
 		loginbackButton.setVisible(false);
 		pwCheckLb.setVisible(false);
 		nameLb.setVisible(false);
 		birthdateLb.setVisible(false);
 		nickNameLb.setVisible(false);
 	} // 로그인 화면 구성
-
 
 	public void gameStart(int nowSelected, String difficulty) {
 		if (selectedMusic != null)
