@@ -2,23 +2,21 @@
 재생되는 음악의 박자에 맞춰 키를 누르는 리듬 게임
 <br></br>
 
-# 💻 프로젝트 소개 
+## 💻 프로젝트 소개 
 본 프로젝트는 2022년 1학기 자바프로그래밍 수업과 2022년 2학기 데이터베이스 수업의 내용을 심화 이해하기 위해 진행된 프로젝트입니다. 
 해당 수업들의 자바와 데이터베이스 관련 내용들을 참고하였고, 동빈나의 ' 자바 리듬게임 만들기 강좌'를 활용하여 프로젝트를 진행하였습니다.
 <br></br>
 
-# 📌 Stacks
+## 📌 Stacks
 
-## Environment
+### Environment
 <img src="https://img.shields.io/badge/eclipseide-2C2255?style=for-the-badge&logo=eclipseide&logoColor=white"><img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"><img src="https://img.shields.io/badge/oracle-F80000?style=for-the-badge&logo=oracle&logoColor=white">
 
-
-
-## Devlopment
+### Devlopment
 <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"><img src="https://img.shields.io/badge/sql-8669AE?style=for-the-badge&logo=sql&8669AE=white">
 <br></br>
 
-# 📢 고객 요구사항
+## 📢 고객 요구사항
 안녕하세요. 저희는 이번에 리듬게임을 출시 하려고 합니다. 현재로서는 너무 많은 기능 보다는 핵심 기능들만 포함시켜 개발한 후 이용자들의 의견을 반영하여 기능들을 점점 추가해 나아갈 예정입니다! <br>
 
 우선 기본적으로 회원 가입을 하고 아이디와 비밀번호를 이용하여 로그인 할 수 있는 기능이 필요합니다. 회원가입 정보에는 아이디, 비밀번호, 이용자 이름, 생년월일, 게임 내에서 사용될 닉네임 정도로 구성되었으면 좋겠습니다. 로그인 한 후에는 상단에 작게 현재 로그인 한 사용자의 닉네임이 표시 되었으면 좋겠습니다. <br>
@@ -29,9 +27,9 @@
  감사합니다! <br></br>
 
 
-# 🔎 고객 요구사항 분석
+## 🔎 고객 요구사항 분석
 
-## · Usecase
+### · Usecase
 
    - 회원 가입 및 로그인
      - 아이디, 비밀번호, 이용자 이름, 생년월일, 게임 내에서 사용될 닉네임 정보를 입력하여 회원 가입할 수 있다.
@@ -53,7 +51,7 @@
      - 게임 플레이 화면에서는 곡 선택 창으로 갈 수 있는 뒤로가기 버튼이 존재한다.
       <br></br>
 
-## · 주요 데이터
+### · 주요 데이터
     
    - 회원 가입 및 로그인 
      - 사용자 정보
@@ -75,5 +73,5 @@
        - 점수(Int)
    <br></br>
    
-## · 주요 ERD 도출
+### · 주요 ERD 도출
 ![KakaoTalk_20240124_211359620](https://github.com/SummerToday/RythmGame-Java_OracleDB/assets/88650436/bdec8306-5d20-4f77-bab3-f544f411e1af)
