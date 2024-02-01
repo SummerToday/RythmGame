@@ -1,5 +1,5 @@
 # RythmGame
-Java와 OracleDB를 활용하여 개발한 리듬 게임 
+Java와 OracleDB를 활용하여 개발한 리듬 게임.
 <br></br>
 
 ## 💻 프로젝트 소개 
