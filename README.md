@@ -75,3 +75,7 @@ Java와 OracleDB를 활용하여 개발한 리듬 게임.
    
 ### · 주요 ERD 도출
 ![KakaoTalk_20240124_211359620](https://github.com/SummerToday/RythmGame-Java_OracleDB/assets/88650436/bdec8306-5d20-4f77-bab3-f544f411e1af)
+<br></br>
+
+## 게임 플레이 영상 링크
+https://drive.google.com/file/d/1fHFdOVPExbLm9-dMPKipf_J3_c8Xl5Ia/view?usp=drive_link
