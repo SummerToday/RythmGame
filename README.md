@@ -79,3 +79,9 @@ Java와 OracleDB를 활용하여 개발한 리듬 게임.
 
 ## 🕹 게임 플레이 영상 링크
 https://drive.google.com/file/d/1fHFdOVPExbLm9-dMPKipf_J3_c8Xl5Ia/view?usp=drive_link
+
+<br></br>
+
+## 대상 수상
+> ![image](https://github.com/user-attachments/assets/628a4ad7-1d36-4571-ab23-1d2edda91e84)
+
