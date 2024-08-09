@@ -77,6 +77,42 @@ Java와 OracleDB를 활용하여 개발한 리듬 게임.
 ![KakaoTalk_20240124_211359620](https://github.com/SummerToday/RythmGame-Java_OracleDB/assets/88650436/bdec8306-5d20-4f77-bab3-f544f411e1af)
 <br></br>
 
+## 주요 게임 플레이 화면
+- 로그인 화면
+  > ![KakaoTalk_20240124_171224101 (1)](https://github.com/user-attachments/assets/b4c64bfb-1ad0-49ad-baf1-a417d9046ab4)
+
+  <br></br>
+
+- 회원가입 화면  
+  > ![KakaoTalk_20240124_171303610 (2)](https://github.com/user-attachments/assets/749e21e0-3763-4c70-bcfc-c2b7815a0c55)
+
+  <br></br>
+
+- 로그인 성공 후 화면
+  > ![KakaoTalk_20240124_171403029 (2)](https://github.com/user-attachments/assets/cc808b46-2708-418b-804c-efd59d426a32)
+
+  <br></br>
+
+- 곡 선택 화면
+  > ![KakaoTalk_20240124_171416887 (2)](https://github.com/user-attachments/assets/14a5081f-35a5-48ad-9323-6b3d35a6310b)
+
+  <br></br>
+
+- 난이도 설정 화면
+  > ![KakaoTalk_20240124_175422755 (2)](https://github.com/user-attachments/assets/daedd7ee-7f93-4ec7-9b4c-7f2b6fb866f4)
+
+  <br></br>
+
+- 게임 플레이 화면
+  > ![KakaoTalk_20240124_175745544 (2)](https://github.com/user-attachments/assets/4b564011-8daf-4e5f-b3b9-4f11a9547172)
+
+  <br></br>
+
+- 게임 오버 화면
+  > ![KakaoTalk_20240124_175436561 (2)](https://github.com/user-attachments/assets/a6e5ffd1-0f01-42fc-b259-e4bffe623497)
+
+<br></br>
+
 ## 🕹 게임 플레이 영상 링크
 https://drive.google.com/file/d/1fHFdOVPExbLm9-dMPKipf_J3_c8Xl5Ia/view?usp=drive_link
 
